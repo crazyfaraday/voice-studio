@@ -23,6 +23,7 @@ body { background:var(--canvas); color:var(--ink); } .topbar { background:rgba(2
 .account-button { min-height:29px; padding:0 10px; border:1px solid #474d60; border-radius:6px; background:#252a35; color:#cbd0dd; font-size:11px; }
 .account-button:hover { border-color:#7770ef; color:#f0efff; }
 .login-layer { position:fixed; z-index:20; inset:0; display:grid; place-items:center; padding:20px; background:rgba(7,8,12,.76); backdrop-filter:blur(8px); }
+.login-layer[hidden] { display:none !important; }
 .login-card { width:min(100%, 370px); padding:28px; border:1px solid #3b4050; border-radius:11px; background:#1b1f29; box-shadow:0 28px 80px rgba(0,0,0,.48); }.login-card h2 { margin:0; color:#f1f2f8; font-size:19px; letter-spacing:-.5px; }.login-card>p:not(.section-kicker):not(.login-message) { margin:10px 0 -2px; color:#959cac; font-size:12px; line-height:1.6; }
 .login-message { min-height:18px; margin:14px 0 0; color:#f3a3ad; font-size:11px; }.login-message.is-ok { color:#8ce0bd; }.login-submit { width:100%; margin-top:7px; }
 .select-like { width:100%; color:#dce0eb; }
