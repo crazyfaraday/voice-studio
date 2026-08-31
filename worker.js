@@ -26,6 +26,23 @@ export default {
         return json({ error: error.message || "Invalid request" }, 400, request);
       }
     }
+    if (url.pathname === "/api/voices") {
+      if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors(request) });
+      if (request.method !== "GET") return json({ error: "Method not allowed" }, 405, request);
+      const auth = authenticate(request, env);
+      if (!auth.ok) return json({ error: auth.error }, auth.status, request);
+      if (!env.MINIMAX_API_KEY) return json({ error: "MINIMAX_API_KEY is not configured" }, 503, request);
+      try {
+        const response = await fetch("https://api.minimaxi.com/v1/get_voice", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${env.MINIMAX_API_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ voice_type: "all" }),
+        });
+        return new Response(response.body, { status: response.status, headers: { "Content-Type": "application/json; charset=utf-8", ...cors(request) } });
+      } catch (error) {
+        return json({ error: error.message || "Unable to load voices" }, 502, request);
+      }
+    }
     return env.ASSETS.fetch(request);
   },
 };

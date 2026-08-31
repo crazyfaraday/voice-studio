@@ -38,7 +38,7 @@
             <div class="card-heading"><div><p class="section-kicker">DEFAULTS</p><h2>全局配音设置</h2></div><button class="text-button" id="resetProjectBtn" title="恢复示例">重置</button></div>
             <label class="field"><span>语音接口地址</span><input class="select-like text-control" id="apiBaseUrl" placeholder="https://voice-studio.faradaycrazy.workers.dev" /><small>密钥只由接口服务器从环境变量读取</small></label>
             <label class="field"><span>语音模型</span><select class="select-like" id="globalModel"><option value="speech-2.8-hd">speech-2.8-hd</option><option value="speech-2.8-turbo">speech-2.8-turbo</option><option value="speech-2.6-hd">speech-2.6-hd</option><option value="speech-2.6-turbo">speech-2.6-turbo</option></select></label>
-            <label class="field"><span>默认音色 ID</span><input class="select-like text-control" id="globalVoice" value="female-shaonv" /><small>可填写 MiniMax 可用音色 ID</small></label>
+            <div class="field"><span>默认音色</span><select class="select-like" id="globalVoice"></select><div class="voice-catalog-note"><small id="voiceCatalogHint">登录后自动加载 MiniMax 可用音色</small><button class="text-button" id="refreshVoicesBtn" type="button">刷新音色</button></div></div>
             <div class="divider"></div><p class="control-title">声音参数</p>
             <label class="slider-field"><span>语速</span><output id="globalSpeedOutput">1.0×</output><input id="globalSpeed" type="range" min="0.5" max="2" step="0.05" value="1" /></label>
             <label class="slider-field"><span>音调</span><output id="globalPitchOutput">0</output><input id="globalPitch" type="range" min="-12" max="12" step="1" value="0" /></label>
@@ -54,7 +54,7 @@
             <div class="card-heading"><div><p class="section-kicker" id="selectedRowLabel">ROW 01</p><h2>单条声音设置</h2></div><button class="text-button text-button--danger" id="deleteRowBtn">删除</button></div>
             <label class="field"><span>文本</span><textarea class="text-editor" id="selectedText" rows="4" placeholder="输入需要配音的文本"></textarea></label>
             <label class="toggle-row"><input id="overrideEnabled" type="checkbox" /><span>覆盖全局参数</span></label>
-            <div id="overrideControls"><label class="field"><span>音色 ID</span><input class="select-like text-control" id="rowVoice" /></label><div class="divider"></div><div class="row-control-heading"><p>声音参数</p><span>单条设置</span></div>
+            <div id="overrideControls"><label class="field"><span>音色</span><select class="select-like" id="rowVoice"></select></label><div class="divider"></div><div class="row-control-heading"><p>声音参数</p><span>单条设置</span></div>
               <label class="slider-field"><span>语速</span><output id="rowSpeedOutput">1.0×</output><input id="rowSpeed" type="range" min="0.5" max="2" step="0.05" /></label><label class="slider-field"><span>音调</span><output id="rowPitchOutput">0</output><input id="rowPitch" type="range" min="-12" max="12" step="1" /></label><label class="slider-field"><span>音量</span><output id="rowVolumeOutput">100%</output><input id="rowVolume" type="range" min="0.1" max="2" step="0.05" /></label>
             </div><button class="reset-row-button" id="resetRowBtn">↺ 恢复使用全局设置</button><div class="row-preview"><span class="mini-wave">▁▃▆▂▅▇▃</span><span id="rowEstimate">预计 00:00</span></div><audio class="audio-preview" id="audioPreview" controls hidden></audio>
           </aside>
