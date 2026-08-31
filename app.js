@@ -8,12 +8,12 @@ const initialRows = [
   { text: "确认无误后，再将完整项目批量输出。" },
   { text: "让每一句话，都有恰到好处的温度。" }
 ];
-const defaults = { apiBase: location.hostname === "localhost" || location.hostname === "127.0.0.1" ? "http://127.0.0.1:8788" : "", model: "speech-2.8-hd", voice: "female-shaonv", speed: 1, pitch: 0, volume: 1, format: "mp3" };
+const defaults = { apiBase: "http://127.0.0.1:8788", model: "speech-2.8-hd", voice: "female-shaonv", speed: 1, pitch: 0, volume: 1, format: "mp3" };
 const state = load();
 const e = { body: $("#scriptBody"), text: $("#selectedText"), override: $("#overrideEnabled"), controls: $("#overrideControls"), audio: $("#audioPreview"), toast: $("#toast") };
 const logs = [];
 
-function load() { try { const saved = JSON.parse(localStorage.getItem(STORAGE)); if (saved?.rows?.length) return { ...saved, settings: { ...defaults, ...saved.settings }, selected: Math.min(saved.selected || 0, saved.rows.length - 1), selectedIds: saved.selectedIds || [0] }; } catch {} return { rows: initialRows.map((row, i) => ({ id: `${Date.now()}-${i}`, status: "待生成", ...row })), settings: { ...defaults }, selected: 0, selectedIds: [0] }; }
+function load() { try { const saved = JSON.parse(localStorage.getItem(STORAGE)); if (saved?.rows?.length) return { ...saved, settings: { ...defaults, ...saved.settings, apiBase: saved.settings?.apiBase || defaults.apiBase }, selected: Math.min(saved.selected || 0, saved.rows.length - 1), selectedIds: saved.selectedIds || [0] }; } catch {} return { rows: initialRows.map((row, i) => ({ id: `${Date.now()}-${i}`, status: "待生成", ...row })), settings: { ...defaults }, selected: 0, selectedIds: [0] }; }
 function persist() { const exportable = { ...state, rows: state.rows.map(({ audioUrl, ...row }) => row) }; localStorage.setItem(STORAGE, JSON.stringify(exportable)); $("#saveHint").textContent = "已保存"; }
 function current() { return state.rows[state.selected]; }
 function params(row) { return row.override ? { voice: row.voice || state.settings.voice, speed: +row.speed, pitch: +row.pitch, volume: +row.volume } : state.settings; }
