@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>声工坊 · AI 配音工作台</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="声工坊首页">
+          <span class="brand-mark"><i></i><i></i><i></i><i></i></span>
+          <span>声工坊</span>
+          <em>VOICE STUDIO</em>
+        </a>
+        <div class="project-meta">
+          <span class="saved-dot"></span>
+          <span>未命名项目</span>
+          <span class="separator">/</span>
+          <span class="muted">刚刚保存</span>
+        </div>
+        <div class="top-actions">
+          <button class="icon-button" aria-label="帮助">?</button>
+          <button class="avatar-button" aria-label="账户">JQ</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="workspace-head">
+          <div>
+            <p class="eyebrow">TEXT TO SPEECH</p>
+            <h1>配音工作台</h1>
+            <p class="subtitle">把文本整理成一份可试听、可批量导出的声音稿。</p>
+          </div>
+          <div class="head-actions">
+            <button class="button button-quiet"><span>↑</span> 导入 Excel</button>
+            <button class="button button-quiet"><span>↓</span> 导出项目</button>
+            <button class="button button-primary"><span>＋</span> 新增文本</button>
+          </div>
+        </section>
+
+        <section class="stat-strip" aria-label="项目概况">
+          <div class="stat"><span>文本条数</span><strong>06</strong></div>
+          <div class="stat"><span>预计时长</span><strong>02:14</strong></div>
+          <div class="stat"><span>已生成</span><strong>03 <small>/ 06</small></strong></div>
+          <div class="stat stat-last"><span>输出格式</span><strong>MP3 <small>· 44.1 kHz</small></strong></div>
+        </section>
+
+        <div class="workspace-grid">
+          <aside class="settings-card">
+            <div class="card-heading">
+              <div>
+                <p class="section-kicker">DEFAULTS</p>
+                <h2>全局配音设置</h2>
+              </div>
+              <button class="more-button" aria-label="更多选项">•••</button>
+            </div>
+
+            <label class="field">
+              <span>语音模型</span>
+              <div class="select-like">MiniMax Speech 2.6 <b>⌄</b></div>
+              <small>用于尚未单独设置的文本</small>
+            </label>
+
+            <label class="field">
+              <span>默认音色</span>
+              <div class="voice-choice">
+                <span class="voice-avatar">晓</span>
+                <span><b>晓晨 · 温和女声</b><small>中文 · 自然叙述</small></span>
+                <b class="chevron">⌄</b>
+              </div>
+            </label>
+
+            <div class="divider"></div>
+            <p class="control-title">声音参数</p>
+            <label class="slider-field"><span>语速</span><output>1.0×</output><input type="range" min="0" max="100" value="50" /></label>
+            <label class="slider-field"><span>音调</span><output>0</output><input type="range" min="0" max="100" value="50" /></label>
+            <label class="slider-field"><span>音量</span><output>100%</output><input type="range" min="0" max="100" value="72" /></label>
+
+            <div class="divider"></div>
+            <label class="field">
+              <span>输出格式</span>
+              <div class="format-row"><button class="format-chip active">MP3</button><button class="format-chip">WAV</button><span>44.1 kHz</span></div>
+            </label>
+            <p class="settings-note"><span>i</span> 单条可覆盖这些默认参数</p>
+          </aside>
+
+          <section class="script-card">
+            <div class="table-toolbar">
+              <div class="toolbar-title"><h2>配音文本</h2><span class="count-chip">6 条</span></div>
+              <div class="toolbar-tools"><button class="plain-button">筛选 <b>⌄</b></button><button class="icon-button bordered" aria-label="表格设置">⚙</button></div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th class="checkbox-col"><input type="checkbox" aria-label="选择全部" /></th><th class="order-col">#</th><th>文本内容</th><th>音色</th><th>单条参数</th><th>时长</th><th>状态</th><th class="action-col"></th></tr></thead>
+                <tbody>
+                  <tr class="is-selected"><td><input type="checkbox" checked aria-label="选择第 1 条" /></td><td>01</td><td class="script-text"><strong>欢迎来到声工坊，开始制作你的声音作品。</strong><span>32 个字符</span></td><td><span class="mini-avatar">晓</span> 晓晨</td><td><span class="override-tag">已单独设置</span></td><td>00:08</td><td><span class="status status-ready"><i></i> 已生成</span></td><td><button class="row-more">•••</button></td></tr>
+                  <tr><td><input type="checkbox" aria-label="选择第 2 条" /></td><td>02</td><td class="script-text"><strong>现在，你可以将一段文字变成富有表现力的声音。</strong><span>35 个字符</span></td><td><span class="mini-avatar">晓</span> 晓晨</td><td><span class="inherit-tag">使用全局</span></td><td>00:09</td><td><span class="status status-ready"><i></i> 已生成</span></td><td><button class="row-more">•••</button></td></tr>
+                  <tr><td><input type="checkbox" aria-label="选择第 3 条" /></td><td>03</td><td class="script-text"><strong>从导入脚本开始，逐行调整最适合的音色和节奏。</strong><span>35 个字符</span></td><td><span class="mini-avatar coral">言</span> 知性男声</td><td><span class="override-tag">已单独设置</span></td><td>00:10</td><td><span class="status status-ready"><i></i> 已生成</span></td><td><button class="row-more">•••</button></td></tr>
+                  <tr><td><input type="checkbox" aria-label="选择第 4 条" /></td><td>04</td><td class="script-text"><strong>每一条声音，都可以先单独试听。</strong><span>21 个字符</span></td><td><span class="mini-avatar">晓</span> 晓晨</td><td><span class="inherit-tag">使用全局</span></td><td>—</td><td><span class="status status-pending"><i></i> 待生成</span></td><td><button class="row-more">•••</button></td></tr>
+                  <tr><td><input type="checkbox" aria-label="选择第 5 条" /></td><td>05</td><td class="script-text"><strong>确认无误后，再将完整项目批量输出。</strong><span>23 个字符</span></td><td><span class="mini-avatar">晓</span> 晓晨</td><td><span class="inherit-tag">使用全局</span></td><td>—</td><td><span class="status status-pending"><i></i> 待生成</span></td><td><button class="row-more">•••</button></td></tr>
+                  <tr><td><input type="checkbox" aria-label="选择第 6 条" /></td><td>06</td><td class="script-text"><strong>让每一句话，都有恰到好处的温度。</strong><span>22 个字符</span></td><td><span class="mini-avatar">晓</span> 晓晨</td><td><span class="inherit-tag">使用全局</span></td><td>—</td><td><span class="status status-pending"><i></i> 待生成</span></td><td><button class="row-more">•••</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="add-row"><button><span>＋</span> 添加一行文本</button><p>也可以粘贴多行内容或导入 Excel</p></div>
+          </section>
+
+          <aside class="row-settings-card">
+            <div class="card-heading">
+              <div><p class="section-kicker">ROW 01</p><h2>单条声音设置</h2></div>
+              <button class="close-button" aria-label="关闭">×</button>
+            </div>
+            <p class="row-setting-intro">此处的设置将覆盖左侧全局默认值。</p>
+            <label class="field"><span>音色</span><div class="voice-choice"><span class="voice-avatar">晓</span><span><b>晓晨 · 温和女声</b><small>中文 · 自然叙述</small></span><b class="chevron">⌄</b></div></label>
+            <div class="divider"></div>
+            <div class="row-control-heading"><p>声音参数</p><span>已覆盖</span></div>
+            <label class="slider-field"><span>语速</span><output>1.15×</output><input type="range" min="0" max="100" value="59" /></label>
+            <label class="slider-field"><span>音调</span><output>+2</output><input type="range" min="0" max="100" value="62" /></label>
+            <label class="slider-field"><span>音量</span><output>92%</output><input type="range" min="0" max="100" value="66" /></label>
+            <button class="reset-row-button">↺ 恢复使用全局设置</button>
+            <div class="row-preview"><span class="mini-wave">▁▃▆▂▅▇▃</span><span>预计 00:08</span></div>
+          </aside>
+        </div>
+
+        <section class="bottom-dock">
+          <div class="selection-info"><span class="selection-tick">✓</span><span>已选择 <b>1</b> 条文本</span><button>取消选择</button></div>
+          <div class="generation-actions"><button class="button button-quiet">试听选中项 <span class="shortcut">⌘ ↵</span></button><button class="button button-primary button-generate"><span class="sound-icon">▮▮▮</span> 生成全部 <b>6 条</b></button></div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
