@@ -59,7 +59,7 @@
             </div><button class="reset-row-button" id="resetRowBtn">↺ 恢复使用全局设置</button><div class="row-preview"><span class="mini-wave">▁▃▆▂▅▇▃</span><span id="rowEstimate">预计 00:00</span></div><audio class="audio-preview" id="audioPreview" controls hidden></audio>
           </aside>
         </div>
-        <section class="log-card" aria-labelledby="logTitle"><div class="log-heading"><div><p class="section-kicker">ACTIVITY</p><h2 id="logTitle">运行日志</h2></div><button class="text-button" id="clearLogBtn">清空日志</button></div><pre class="log-output" id="logOutput" aria-live="polite"></pre></section>
+        <section class="log-card" id="logPanel" aria-labelledby="logTitle"><div class="log-heading"><button class="log-title-button" id="toggleLogBtn" type="button" aria-expanded="true"><span><p class="section-kicker">ACTIVITY</p><h2 id="logTitle">运行日志</h2></span><small id="logToggleText">收起日志</small></button><button class="text-button" id="clearLogBtn">清空日志</button></div><pre class="log-output" id="logOutput" aria-live="polite"></pre></section>
         <section class="bottom-dock"><div class="selection-info"><span>已选择 <b id="selectedCount">0</b> 条文本</span><button id="clearSelectionBtn">取消选择</button></div><div class="generation-actions"><button class="button button-quiet" id="testRowBtn">试听选中项</button><button class="button button-primary button-generate" id="generateAllBtn">生成全部 <b id="generateCount">0 条</b></button></div></section>
       </main>
     </div>
