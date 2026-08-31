@@ -38,7 +38,7 @@
             <div class="card-heading"><div><p class="section-kicker">DEFAULTS</p><h2>全局配音设置</h2></div><button class="text-button" id="resetProjectBtn" title="恢复示例">重置</button></div>
             <label class="field"><span>语音接口地址</span><input class="select-like text-control" id="apiBaseUrl" placeholder="https://voice-studio.faradaycrazy.workers.dev" /><small>密钥只由接口服务器从环境变量读取</small></label>
             <label class="field"><span>语音模型</span><select class="select-like" id="globalModel"><option value="speech-2.8-hd">speech-2.8-hd</option><option value="speech-2.8-turbo">speech-2.8-turbo</option><option value="speech-2.6-hd">speech-2.6-hd</option><option value="speech-2.6-turbo">speech-2.6-turbo</option></select></label>
-            <div class="field"><span>默认音色</span><select class="select-like" id="globalVoice"></select><div class="voice-catalog-note"><small id="voiceCatalogHint">登录后自动加载 MiniMax 可用音色</small><button class="text-button" id="refreshVoicesBtn" type="button">刷新音色</button></div></div>
+            <div class="field"><span>默认音色</span><select class="select-like" id="globalVoice"></select><div class="voice-catalog-note"><small id="voiceCatalogHint">登录后自动加载 MiniMax 可用音色</small><span><button class="text-button" id="manageVoicesBtn" type="button">管理音色</button><button class="text-button" id="refreshVoicesBtn" type="button">刷新</button></span></div></div>
             <div class="divider"></div><p class="control-title">声音参数</p>
             <label class="slider-field"><span>语速</span><output id="globalSpeedOutput">1.0×</output><input id="globalSpeed" type="range" min="0.5" max="2" step="0.05" value="1" /></label>
             <label class="slider-field"><span>音调</span><output id="globalPitchOutput">0</output><input id="globalPitch" type="range" min="-12" max="12" step="1" value="0" /></label>
@@ -73,6 +73,15 @@
         <p class="login-message" id="loginMessage" aria-live="polite"></p>
         <button class="button button-primary login-submit" type="submit">登录并继续</button>
       </form>
+    </div>
+    <div class="voice-dialog-layer" id="voiceDialog" hidden>
+      <section class="voice-dialog" role="dialog" aria-modal="true" aria-labelledby="voiceDialogTitle">
+        <div class="voice-dialog-heading"><div><p class="section-kicker">VOICE CATALOG</p><h2 id="voiceDialogTitle">筛选下拉菜单音色</h2><p>勾选后，这些音色会出现在全局和单条音色下拉菜单中。</p></div><button class="close-button" id="closeVoiceDialogBtn" type="button" aria-label="关闭">×</button></div>
+        <div class="voice-dialog-tools"><input class="select-like text-control" id="voiceSearch" type="search" placeholder="搜索名称、ID 或描述" /><div><button class="text-button" id="selectAllVoicesBtn" type="button">全选</button><button class="text-button" id="clearVoiceSelectionBtn" type="button">清空</button></div></div>
+        <p class="voice-selection-summary" id="voiceSelectionSummary"></p>
+        <div class="voice-picker-list" id="voicePickerList"></div>
+        <div class="voice-dialog-actions"><button class="button button-quiet" id="cancelVoiceDialogBtn" type="button">取消</button><button class="button button-primary" id="saveVoiceFilterBtn" type="button">保存筛选</button></div>
+      </section>
     </div>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
   </body>
