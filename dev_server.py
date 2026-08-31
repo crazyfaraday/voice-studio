@@ -37,5 +37,5 @@ class Handler(SimpleHTTPRequestHandler):
         body = json.dumps(value, ensure_ascii=False).encode(); self.send_response(status); self.send_header("Content-Type", "application/json; charset=utf-8"); self.send_header("Content-Length", str(len(body))); self.end_headers(); self.wfile.write(body)
 
 if __name__ == "__main__":
-    print("Voice Studio local server: http://127.0.0.1:8788")
+    print("JP-merge 配音工具本地服务: http://127.0.0.1:8788")
     ThreadingHTTPServer(("127.0.0.1", 8788), Handler).serve_forever()

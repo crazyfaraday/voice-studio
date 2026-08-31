@@ -3,24 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>声工坊 · AI 配音工作台</title>
+    <title>JP-merge配音工具</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css?v=login-overlay-fix-1" />
     <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script defer src="./app.js?v=voice-catalog-2"></script>
+    <script defer src="./app.js?v=voice-catalog-3"></script>
   </head>
   <body>
     <div class="app-shell">
       <header class="topbar">
-        <a class="brand" href="./" aria-label="声工坊首页"><span class="brand-mark"><i></i><i></i><i></i><i></i></span><span>声工坊</span><em>VOICE STUDIO</em></a>
+        <a class="brand" href="./" aria-label="JP-merge配音工具首页"><span class="brand-mark"><i></i><i></i><i></i><i></i></span><span>JP-merge</span><em>VOICE TOOL</em></a>
         <div class="project-meta"><span class="saved-dot"></span><span id="projectName">未命名项目</span><span class="separator">/</span><span class="muted" id="saveHint">本地保存</span></div>
         <div class="top-actions"><button class="text-button" id="apiHelpBtn">接口说明</button><button class="account-button" id="loginBtn">登录使用</button></div>
       </header>
       <main>
         <section class="workspace-head">
-          <div><p class="eyebrow">TEXT TO SPEECH</p><h1>配音工作台</h1><p class="subtitle">编辑文本、调整声音参数，然后单条试听或批量生成。</p></div>
+          <div><p class="eyebrow">TEXT TO SPEECH</p><h1>JP-merge配音工具</h1><p class="subtitle">编辑文本、调整声音参数，然后单条试听或批量生成。</p></div>
           <div class="head-actions">
             <label class="button button-quiet">导入 Excel<input id="excelInput" type="file" accept=".xlsx,.xls,.csv" hidden /></label>
             <button class="button button-quiet" id="exportExcelBtn">导出 Excel</button>

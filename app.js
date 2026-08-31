@@ -1,7 +1,7 @@
 const $ = (s) => document.querySelector(s);
 const STORAGE = "voice-studio-project-v1";
 const initialRows = [
-  { text: "欢迎来到声工坊，开始制作你的声音作品。", override: true, voice: "female-shaonv", speed: 1.15, pitch: 2, volume: 0.92 },
+  { text: "欢迎使用 JP-merge 配音工具，开始制作你的声音作品。", override: true, voice: "female-shaonv", speed: 1.15, pitch: 2, volume: 0.92 },
   { text: "现在，你可以将一段文字变成富有表现力的声音。" },
   { text: "从导入脚本开始，逐行调整最适合的音色和节奏。", override: true, voice: "male-qn-qingse", speed: 0.9, pitch: 0, volume: 1 },
   { text: "每一条声音，都可以先单独试听。" },
