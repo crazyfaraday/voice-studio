@@ -16,15 +16,15 @@
       <header class="topbar">
         <a class="brand" href="./" aria-label="声工坊首页"><span class="brand-mark"><i></i><i></i><i></i><i></i></span><span>声工坊</span><em>VOICE STUDIO</em></a>
         <div class="project-meta"><span class="saved-dot"></span><span id="projectName">未命名项目</span><span class="separator">/</span><span class="muted" id="saveHint">本地保存</span></div>
-        <div class="top-actions"><button class="icon-button" id="apiHelpBtn" aria-label="接口说明">?</button><button class="avatar-button" aria-label="账户">JQ</button></div>
+        <div class="top-actions"><button class="text-button" id="apiHelpBtn">接口说明</button><button class="avatar-button" aria-label="账户">JQ</button></div>
       </header>
       <main>
         <section class="workspace-head">
           <div><p class="eyebrow">TEXT TO SPEECH</p><h1>配音工作台</h1><p class="subtitle">编辑文本、调整声音参数，然后单条试听或批量生成。</p></div>
           <div class="head-actions">
-            <label class="button button-quiet"><span>↑</span> 导入 Excel<input id="excelInput" type="file" accept=".xlsx,.xls,.csv" hidden /></label>
-            <button class="button button-quiet" id="exportExcelBtn"><span>↓</span> 导出 Excel</button>
-            <button class="button button-primary" id="addTextBtn"><span>＋</span> 新增文本</button>
+            <label class="button button-quiet">导入 Excel<input id="excelInput" type="file" accept=".xlsx,.xls,.csv" hidden /></label>
+            <button class="button button-quiet" id="exportExcelBtn">导出 Excel</button>
+            <button class="button button-primary" id="addTextBtn">新增文本</button>
           </div>
         </section>
         <section class="stat-strip" aria-label="项目概况">
@@ -35,7 +35,7 @@
         </section>
         <div class="workspace-grid">
           <aside class="settings-card">
-            <div class="card-heading"><div><p class="section-kicker">DEFAULTS</p><h2>全局配音设置</h2></div><button class="more-button" id="resetProjectBtn" title="恢复示例">•••</button></div>
+            <div class="card-heading"><div><p class="section-kicker">DEFAULTS</p><h2>全局配音设置</h2></div><button class="text-button" id="resetProjectBtn" title="恢复示例">重置</button></div>
             <label class="field"><span>语音接口地址</span><input class="select-like text-control" id="apiBaseUrl" placeholder="本地默认 http://127.0.0.1:8788" /><small>密钥只由接口服务器从环境变量读取</small></label>
             <label class="field"><span>语音模型</span><select class="select-like" id="globalModel"><option value="speech-2.8-hd">speech-2.8-hd</option><option value="speech-2.8-turbo">speech-2.8-turbo</option><option value="speech-2.6-hd">speech-2.6-hd</option><option value="speech-2.6-turbo">speech-2.6-turbo</option></select></label>
             <label class="field"><span>默认音色 ID</span><input class="select-like text-control" id="globalVoice" value="female-shaonv" /><small>可填写 MiniMax 可用音色 ID</small></label>
@@ -46,12 +46,12 @@
             <div class="divider"></div><label class="field"><span>输出格式</span><div class="format-row"><button class="format-chip active" data-format="mp3">MP3</button><button class="format-chip" data-format="wav">WAV</button><span>32 kHz</span></div></label><p class="settings-note"><span>i</span> 密钥不在浏览器中保存；单条可覆盖全局参数。</p>
           </aside>
           <section class="script-card">
-            <div class="table-toolbar"><div class="toolbar-title"><h2>配音文本</h2><span class="count-chip" id="rowCountChip">0 条</span></div><div class="toolbar-tools"><button class="plain-button" id="exportProjectBtn">导出项目</button><button class="icon-button bordered" id="clearAudioBtn" aria-label="清除音频">⌫</button></div></div>
+            <div class="table-toolbar"><div class="toolbar-title"><h2>配音文本</h2><span class="count-chip" id="rowCountChip">0 条</span></div><div class="toolbar-tools"><button class="plain-button" id="exportProjectBtn">导出项目</button><button class="plain-button" id="clearAudioBtn">清除音频</button></div></div>
             <div class="table-wrap"><table><thead><tr><th class="checkbox-col"><input id="selectAll" type="checkbox" aria-label="选择全部" /></th><th class="order-col">#</th><th>文本内容</th><th>音色</th><th>单条参数</th><th>时长</th><th>状态</th><th class="action-col"></th></tr></thead><tbody id="scriptBody"></tbody></table></div>
-            <div class="add-row"><button id="addRowBtn"><span>＋</span> 添加一行文本</button><p>粘贴多行内容或导入 Excel 均可</p></div>
+            <div class="add-row"><button id="addRowBtn">添加一行文本</button><p>粘贴多行内容或导入 Excel 均可</p></div>
           </section>
           <aside class="row-settings-card">
-            <div class="card-heading"><div><p class="section-kicker" id="selectedRowLabel">ROW 01</p><h2>单条声音设置</h2></div><button class="close-button" id="deleteRowBtn" aria-label="删除当前文本">×</button></div>
+            <div class="card-heading"><div><p class="section-kicker" id="selectedRowLabel">ROW 01</p><h2>单条声音设置</h2></div><button class="text-button text-button--danger" id="deleteRowBtn">删除</button></div>
             <label class="field"><span>文本</span><textarea class="text-editor" id="selectedText" rows="4" placeholder="输入需要配音的文本"></textarea></label>
             <label class="toggle-row"><input id="overrideEnabled" type="checkbox" /><span>覆盖全局参数</span></label>
             <div id="overrideControls"><label class="field"><span>音色 ID</span><input class="select-like text-control" id="rowVoice" /></label><div class="divider"></div><div class="row-control-heading"><p>声音参数</p><span>单条设置</span></div>
@@ -59,7 +59,8 @@
             </div><button class="reset-row-button" id="resetRowBtn">↺ 恢复使用全局设置</button><div class="row-preview"><span class="mini-wave">▁▃▆▂▅▇▃</span><span id="rowEstimate">预计 00:00</span></div><audio class="audio-preview" id="audioPreview" controls hidden></audio>
           </aside>
         </div>
-        <section class="bottom-dock"><div class="selection-info"><span class="selection-tick">✓</span><span>已选择 <b id="selectedCount">0</b> 条文本</span><button id="clearSelectionBtn">取消选择</button></div><div class="generation-actions"><button class="button button-quiet" id="testRowBtn">试听选中项 <span class="shortcut">⌘ ↵</span></button><button class="button button-primary button-generate" id="generateAllBtn"><span class="sound-icon">▮▮▮</span> 生成全部 <b id="generateCount">0 条</b></button></div></section>
+        <section class="log-card" aria-labelledby="logTitle"><div class="log-heading"><div><p class="section-kicker">ACTIVITY</p><h2 id="logTitle">运行日志</h2></div><button class="text-button" id="clearLogBtn">清空日志</button></div><pre class="log-output" id="logOutput" aria-live="polite"></pre></section>
+        <section class="bottom-dock"><div class="selection-info"><span>已选择 <b id="selectedCount">0</b> 条文本</span><button id="clearSelectionBtn">取消选择</button></div><div class="generation-actions"><button class="button button-quiet" id="testRowBtn">试听选中项</button><button class="button button-primary button-generate" id="generateAllBtn">生成全部 <b id="generateCount">0 条</b></button></div></section>
       </main>
     </div>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
