@@ -1,12 +1,12 @@
 const $ = (s) => document.querySelector(s);
 const STORAGE = "voice-studio-project-v1";
 const initialRows = [
-  { text: "欢迎使用 JP-merge 配音工具，开始制作你的声音作品。", override: true, voice: "female-shaonv", speed: 1.15, pitch: 2, volume: 0.92 },
-  { text: "现在，你可以将一段文字变成富有表现力的声音。" },
-  { text: "从导入脚本开始，逐行调整最适合的音色和节奏。", override: true, voice: "male-qn-qingse", speed: 0.9, pitch: 0, volume: 1 },
-  { text: "每一条声音，都可以先单独试听。" },
-  { text: "确认无误后，再将完整项目批量输出。" },
-  { text: "让每一句话，都有恰到好处的温度。" }
+  { text: "欢迎来到 JP-merge！合成相同物品，解锁更多惊喜。", override: true, voice: "female-shaonv", speed: 1.15, pitch: 2, volume: 0.92 },
+  { text: "拖动两个相同的物品合并，获得更高级的奖励。" },
+  { text: "完成订单，收集金币，打造属于你的温馨小镇。", override: true, voice: "male-qn-qingse", speed: 0.9, pitch: 0, volume: 1 },
+  { text: "新的任务已经到达，快来看看需要哪些物品吧。" },
+  { text: "恭喜你解锁了新的区域，更多故事正在等待开启。" },
+  { text: "每天登录领取奖励，让你的合成之旅更加轻松。" }
 ];
 const defaults = { apiBase: "https://voice-studio.faradaycrazy.workers.dev", model: "speech-2.8-hd", voice: "female-shaonv", speed: 1, pitch: 0, volume: 1, format: "mp3" };
 const state = load();
@@ -17,7 +17,10 @@ const AUTH_NAME_STORAGE = "voice-studio-session-name";
 let voiceCatalog = [];
 let voiceDialogSelection = new Set();
 
-function load() { try { const saved = JSON.parse(localStorage.getItem(STORAGE)); if (saved?.rows?.length) return { ...saved, settings: { ...defaults, ...saved.settings, apiBase: saved.settings?.apiBase || defaults.apiBase }, selected: Math.min(saved.selected || 0, saved.rows.length - 1), selectedIds: saved.selectedIds || [0], voiceFilter: Array.isArray(saved.voiceFilter) ? saved.voiceFilter : null }; } catch {} return { rows: initialRows.map((row, i) => ({ id: `${Date.now()}-${i}`, status: "待生成", ...row })), settings: { ...defaults }, selected: 0, selectedIds: [0], voiceFilter: null }; }
+const legacyDemoSequences = [["欢迎来到声工坊，开始制作你的声音作品。", "现在，你可以将一段文字变成富有表现力的声音。", "从导入脚本开始，逐行调整最适合的音色和节奏。", "每一条声音，都可以先单独试听。", "确认无误后，再将完整项目批量输出。", "让每一句话，都有恰到好处的温度。"], ["欢迎使用 JP-merge 配音工具，开始制作你的声音作品。", "现在，你可以将一段文字变成富有表现力的声音。", "从导入脚本开始，逐行调整最适合的音色和节奏。", "每一条声音，都可以先单独试听。", "确认无误后，再将完整项目批量输出。", "让每一句话，都有恰到好处的温度。"]];
+function initialState() { return { rows: initialRows.map((row, i) => ({ id: `${Date.now()}-${i}`, status: "待生成", ...row })), settings: { ...defaults }, selected: 0, selectedIds: [0], voiceFilter: null }; }
+function isLegacyDemo(rows) { return legacyDemoSequences.some((texts) => rows.length === texts.length && rows.every((row, index) => row.text === texts[index])); }
+function load() { try { const saved = JSON.parse(localStorage.getItem(STORAGE)); if (saved?.rows?.length) { if (isLegacyDemo(saved.rows)) return initialState(); return { ...saved, settings: { ...defaults, ...saved.settings, apiBase: saved.settings?.apiBase || defaults.apiBase }, selected: Math.min(saved.selected || 0, saved.rows.length - 1), selectedIds: saved.selectedIds || [0], voiceFilter: Array.isArray(saved.voiceFilter) ? saved.voiceFilter : null }; } } catch {} return initialState(); }
 function persist() { const exportable = { ...state, rows: state.rows.map(({ audioUrl, ...row }) => row) }; localStorage.setItem(STORAGE, JSON.stringify(exportable)); $("#saveHint").textContent = "已保存"; }
 function current() { return state.rows[state.selected]; }
 function params(row) { return row.override ? { voice: row.voice || state.settings.voice, speed: +row.speed, pitch: +row.pitch, volume: +row.volume } : state.settings; }
