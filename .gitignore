@@ -17,4 +17,6 @@ dist-google-fixed/
 build-google-fixed/
 dist-output-folder/
 build-output-folder/
+dist-cv-autofill/
+build-cv-autofill/
 *.spec
