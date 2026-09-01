@@ -7,9 +7,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css?v=login-overlay-fix-1" />
+    <link rel="stylesheet" href="./styles.css?v=dingtalk-import-1" />
     <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script defer src="./app.js?v=project-save-1"></script>
+    <script defer src="./app.js?v=dingtalk-import-1"></script>
   </head>
   <body>
     <div class="app-shell">
@@ -22,6 +22,7 @@
         <section class="workspace-head">
           <div><p class="eyebrow">TEXT TO SPEECH</p><h1>JP-merge配音工具</h1><p class="subtitle">编辑文本、调整声音参数，然后单条试听或批量生成。</p></div>
           <div class="head-actions">
+            <button class="button button-quiet" id="importDingTalkBtn" type="button">导入钉钉文档</button>
             <label class="button button-quiet">导入 Excel<input id="excelInput" type="file" accept=".xlsx,.xls,.csv" hidden /></label>
             <button class="button button-quiet" id="exportExcelBtn">导出 Excel</button>
             <button class="button button-primary" id="addTextBtn">新增文本</button>
@@ -81,6 +82,19 @@
         <p class="voice-selection-summary" id="voiceSelectionSummary"></p>
         <div class="voice-picker-list" id="voicePickerList"></div>
         <div class="voice-dialog-actions"><button class="button button-quiet" id="cancelVoiceDialogBtn" type="button">取消</button><button class="button button-primary" id="saveVoiceFilterBtn" type="button">保存筛选</button></div>
+      </section>
+    </div>
+    <div class="voice-dialog-layer" id="dingTalkDialog" hidden>
+      <section class="voice-dialog dingtalk-dialog" role="dialog" aria-modal="true" aria-labelledby="dingTalkDialogTitle">
+        <div class="voice-dialog-heading"><div><p class="section-kicker">LOCAL DOCUMENT ASSISTANT</p><h2 id="dingTalkDialogTitle">导入钉钉表格</h2><p>文档凭据仅由本机助手读取，不会上传到网页或配音服务。</p></div><button class="close-button" id="closeDingTalkDialogBtn" type="button" aria-label="关闭">×</button></div>
+        <p class="assistant-status" id="dingTalkStatus">正在检测本机文档助手…</p>
+        <label class="field"><span>钉钉表格链接或 Workbook ID</span><input class="select-like text-control" id="dingTalkUrl" type="text" placeholder="粘贴钉钉表格链接" /></label>
+        <div class="document-step-actions"><button class="button button-quiet" id="loadDingTalkSheetsBtn" type="button">读取工作表</button><select class="select-like" id="dingTalkSheet" disabled><option>请先读取工作表</option></select></div>
+        <div class="document-range-grid"><label class="field"><span>表头行</span><input class="select-like text-control" id="dingTalkHeaderRow" type="number" min="1" value="1" /></label><label class="field"><span>起始行</span><input class="select-like text-control" id="dingTalkStartRow" type="number" min="1" value="2" /></label><label class="field"><span>结束行</span><input class="select-like text-control" id="dingTalkEndRow" type="number" min="1" value="100" /></label></div>
+        <div class="document-step-actions"><button class="button button-quiet" id="previewDingTalkBtn" type="button" disabled>读取列与预览</button><span id="dingTalkPreviewHint">先选择工作表</span></div>
+        <div class="document-columns" id="dingTalkColumns" hidden></div>
+        <div class="document-preview" id="dingTalkPreview" hidden></div>
+        <div class="voice-dialog-actions"><button class="button button-quiet" id="cancelDingTalkDialogBtn" type="button">取消</button><select class="select-like import-mode" id="dingTalkImportMode"><option value="append">追加到当前文本</option><option value="replace">替换当前文本</option></select><button class="button button-primary" id="importDingTalkTextBtn" type="button" disabled>导入所选列</button></div>
       </section>
     </div>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
