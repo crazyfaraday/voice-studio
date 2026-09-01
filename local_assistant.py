@@ -22,6 +22,7 @@ HOST = "127.0.0.1"
 PORT = 8789
 ROOT = Path(os.environ.get("JP_MERGE_APP_ROOT", Path(__file__).resolve().parent))
 OUTPUT_DIR = ROOT / "配音输出"
+PROJECT_FILE = ROOT / "project.json"
 LEVEL_DIALOG_SPREADSHEET_ID = "1qzutyd0AHHmcrvi_sZlhvIeNupiR_B8mMMVP7W9Dq8w"
 LEVEL_DIALOG_SHEET = "LevelDialogConfig"
 FALLBACK_ENV = Path(r"D:\story-translation-automation\.env")
@@ -372,6 +373,30 @@ def save_audio_file(filename: str, encoded_audio: object) -> dict[str, str]:
     return {"filename": filename, "folder": str(OUTPUT_DIR), "path": str(target)}
 
 
+def load_project_file() -> dict[str, object]:
+    if not PROJECT_FILE.is_file():
+        return {"exists": False}
+    try:
+        project = json.loads(PROJECT_FILE.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise ValueError("已保存的项目文件无法读取") from error
+    if not isinstance(project, dict):
+        raise ValueError("已保存的项目文件格式无效")
+    return {"exists": True, "project": project}
+
+
+def save_project_file(project: object) -> dict[str, object]:
+    if not isinstance(project, dict) or not isinstance(project.get("rows"), list):
+        raise ValueError("项目内容格式无效")
+    encoded = json.dumps(project, ensure_ascii=False, indent=2)
+    if len(encoded.encode("utf-8")) > 5 * 1024 * 1024:
+        raise ValueError("项目文件超过 5 MB，无法保存")
+    temporary = PROJECT_FILE.with_suffix(".json.tmp")
+    temporary.write_text(encoded, encoding="utf-8")
+    temporary.replace(PROJECT_FILE)
+    return {"saved": True, "path": str(PROJECT_FILE)}
+
+
 class Handler(BaseHTTPRequestHandler):
     server_version = "JPMergeLocalAssistant/1.0"
 
@@ -418,12 +443,18 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == "/google/health":
             self.reply(200, google_health())
             return
+        if self.path == "/project/load":
+            self.reply(200, load_project_file())
+            return
         self.reply(404, {"error": "Not found"})
 
     def do_POST(self) -> None:
         try:
-            body = self.read_body(42 * 1024 * 1024 if self.path == "/audio/save" else 100_000)
+            body = self.read_body(42 * 1024 * 1024 if self.path == "/audio/save" else 5 * 1024 * 1024 if self.path == "/project/save" else 100_000)
             settings = config()
+            if self.path == "/project/save":
+                self.reply(200, save_project_file(body.get("project")))
+                return
             if self.path == "/audio/save":
                 self.reply(200, save_audio_file(str(body.get("filename", "")), body.get("audioBase64")))
                 return
