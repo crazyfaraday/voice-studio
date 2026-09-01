@@ -15,4 +15,6 @@ dist-diagnostic/
 build-diagnostic/
 dist-google-fixed/
 build-google-fixed/
+dist-output-folder/
+build-output-folder/
 *.spec
