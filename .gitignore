@@ -9,4 +9,6 @@ build/
 dist/
 dist-update/
 build-update/
+dist-modal-fix/
+build-modal-fix/
 *.spec
