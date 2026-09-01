@@ -33,3 +33,9 @@ DINGTALK_OPERATOR_UNION_ID=...
 ## 发布
 
 本项目将独立连接一个 Cloudflare Worker，不与 ItemTools 共用网址、密钥或发布流程。
+
+## Windows 桌面应用
+
+双击 `启动桌面应用.cmd` 即可打开桌面版。它会自动启动本机文档助手，并在应用关闭时一并停止，因此不再需要单独运行“启动本机助手”。
+
+要制作可分发版本，运行 `打包桌面应用.cmd`。生成结果位于 `dist/JPMergeVoiceTool/`；将 `.env` 与 `credentials/google-service-account.json` 放在该目录下即可让成品继续读取钉钉与 Google 表格。密钥文件不会被打包或提交到 Git。

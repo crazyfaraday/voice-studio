@@ -5,3 +5,6 @@ node_modules/
 .env.local
 __pycache__/
 credentials/*.json
+build/
+dist/
+*.spec

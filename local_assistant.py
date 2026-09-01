@@ -18,9 +18,9 @@ from urllib.request import Request, urlopen
 
 HOST = "127.0.0.1"
 PORT = 8789
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(os.environ.get("JP_MERGE_APP_ROOT", Path(__file__).resolve().parent))
 FALLBACK_ENV = Path(r"D:\story-translation-automation\.env")
-ALLOWED_ORIGINS = {"https://crazyfaraday.github.io", "http://127.0.0.1:4173", "http://localhost:4173"}
+ALLOWED_ORIGINS = {"https://crazyfaraday.github.io", "http://127.0.0.1:4173", "http://localhost:4173", "http://127.0.0.1:8790", "http://localhost:8790"}
 
 
 def load_env() -> dict[str, str]:
