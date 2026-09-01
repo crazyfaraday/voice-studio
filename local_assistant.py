@@ -22,6 +22,8 @@ HOST = "127.0.0.1"
 PORT = 8789
 ROOT = Path(os.environ.get("JP_MERGE_APP_ROOT", Path(__file__).resolve().parent))
 OUTPUT_DIR = ROOT / "配音输出"
+LEVEL_DIALOG_SPREADSHEET_ID = "1qzutyd0AHHmcrvi_sZlhvIeNupiR_B8mMMVP7W9Dq8w"
+LEVEL_DIALOG_SHEET = "LevelDialogConfig"
 FALLBACK_ENV = Path(r"D:\story-translation-automation\.env")
 ALLOWED_ORIGINS = {"https://crazyfaraday.github.io", "http://127.0.0.1:4173", "http://localhost:4173", "http://127.0.0.1:8790", "http://localhost:8790"}
 
@@ -296,6 +298,51 @@ def google_write_range(spreadsheet_id: str, sheet: str, start_cell: str, values:
     )
 
 
+def write_level_dialog_cv(items: object) -> dict[str, object]:
+    """Match dialog keys in column G and overwrite their CV values in column M."""
+    if not isinstance(items, list) or not items or len(items) > 1000:
+        raise ValueError("需要提供 1 至 1000 条待回填的配音文件名")
+    requested: dict[str, str] = {}
+    for item in items:
+        if not isinstance(item, dict):
+            raise ValueError("回填内容格式无效")
+        key = str(item.get("sourceKey", "")).strip()
+        cv_name = str(item.get("cvName", "")).strip()
+        if not key or not cv_name:
+            raise ValueError("回填内容缺少 Key 或 CV 文件名")
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,119}", cv_name):
+            raise ValueError("CV 文件名无效")
+        requested[key] = cv_name
+
+    key_range = f"'{LEVEL_DIALOG_SHEET}'!G4:G"
+    values = google_request(
+        f"https://sheets.googleapis.com/v4/spreadsheets/{quote(LEVEL_DIALOG_SPREADSHEET_ID, safe='')}/values/{quote(key_range, safe='')}"
+    ).get("values", [])
+    key_rows = {
+        str(row[0]).strip(): row_number
+        for row_number, row in enumerate(values, start=4)
+        if isinstance(row, list) and row and str(row[0]).strip()
+    }
+    data = []
+    updated: list[dict[str, object]] = []
+    missing: list[str] = []
+    for key, cv_name in requested.items():
+        row_number = key_rows.get(key)
+        if row_number is None:
+            missing.append(key)
+            continue
+        cell = f"'{LEVEL_DIALOG_SHEET}'!M{row_number}"
+        data.append({"range": cell, "values": [[cv_name]]})
+        updated.append({"sourceKey": key, "cvName": cv_name, "row": row_number})
+    if data:
+        google_request(
+            f"https://sheets.googleapis.com/v4/spreadsheets/{quote(LEVEL_DIALOG_SPREADSHEET_ID, safe='')}/values:batchUpdate",
+            method="POST",
+            payload={"valueInputOption": "USER_ENTERED", "data": data},
+        )
+    return {"updated": updated, "missing": missing, "sheet": LEVEL_DIALOG_SHEET, "column": "M"}
+
+
 def google_health() -> dict:
     path = google_credentials_path()
     if not path.is_file():
@@ -418,6 +465,9 @@ class Handler(BaseHTTPRequestHandler):
                     raise ValueError("请先选择工作表")
                 result = google_write_range(spreadsheet_id, sheet, str(body.get("startCell", "")).strip().upper(), body.get("values"))
                 self.reply(200, {"updatedRange": result.get("updatedRange", ""), "updatedCells": result.get("updatedCells", 0)})
+                return
+            if self.path == "/google/write-level-dialog-cv":
+                self.reply(200, write_level_dialog_cv(body.get("items")))
                 return
             self.reply(404, {"error": "Not found"})
         except (TypeError, ValueError) as error:
