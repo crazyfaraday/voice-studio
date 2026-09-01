@@ -19,4 +19,6 @@ dist-output-folder/
 build-output-folder/
 dist-cv-autofill/
 build-cv-autofill/
+dist-pause-resume/
+build-pause-resume/
 *.spec
