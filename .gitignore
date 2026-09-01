@@ -11,4 +11,6 @@ dist-update/
 build-update/
 dist-modal-fix/
 build-modal-fix/
+dist-diagnostic/
+build-diagnostic/
 *.spec

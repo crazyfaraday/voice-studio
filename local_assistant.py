@@ -87,7 +87,16 @@ def request_json(url: str, *, method: str = "GET", headers: dict[str, str] | Non
             detail = {}
         nested_error = detail.get("error") if isinstance(detail.get("error"), dict) else {}
         message = detail.get("message") or detail.get("errmsg") or detail.get("errorMessage") or nested_error.get("message") or f"接口返回 HTTP {error.code}"
-        raise ValueError(message) from error
+        raise ValueError(f"HTTP {error.code}：{message}") from error
+
+
+def safe_error_message(error: Exception) -> str:
+    """Return enough diagnostic detail without ever exposing credential content."""
+    message = str(error).replace("\r", " ").replace("\n", " ").strip()
+    for marker in ("private_key", "client_secret", "access_token", "Authorization"):
+        if marker.lower() in message.lower():
+            return "认证配置发生错误（敏感内容已隐藏）"
+    return message[:700] or error.__class__.__name__
 
 
 def access_token(settings: dict[str, str]) -> str:
@@ -385,7 +394,8 @@ class Handler(BaseHTTPRequestHandler):
         except Exception as error:
             print(f"[本机文档助手] 未处理错误：{error}")
             source = "Google 表格" if self.path.startswith("/google/") else "钉钉文档"
-            self.reply(502, {"error": f"读取{source}失败，请检查本机助手窗口中的错误信息"})
+            detail = safe_error_message(error)
+            self.reply(502, {"error": f"读取{source}失败：{detail}", "diagnostic": f"步骤：{self.path}；异常：{error.__class__.__name__}"})
 
 
 if __name__ == "__main__":
