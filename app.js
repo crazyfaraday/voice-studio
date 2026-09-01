@@ -10,10 +10,11 @@ const initialRows = [
   { text: "恭喜你解锁了新的区域，更多故事正在等待开启。" },
   { text: "每天登录领取奖励，让你的合成之旅更加轻松。" }
 ];
-const defaults = { apiBase: "https://voice-studio.faradaycrazy.workers.dev", model: "speech-2.8-hd", voice: "female-shaonv", speed: 1, pitch: 0, volume: 1, format: "mp3", filenameCode: "" };
+const defaults = { apiBase: "https://voice-studio.faradaycrazy.workers.dev", model: "speech-2.8-hd", voice: "female-shaonv", speed: 1, pitch: 0, volume: 1, format: "mp3", filenameCode: "1" };
 let restoredProject = false;
 let lastSavedAt = 0;
 const state = load();
+if (state.settings.filenameCode === "2" && !state.settings.filenameCodeCorrectionApplied) { state.settings.filenameCode = "1"; state.settings.filenameCodeCorrectionApplied = true; }
 const e = { body: $("#scriptBody"), text: $("#selectedText"), override: $("#overrideEnabled"), controls: $("#overrideControls"), audio: $("#audioPreview"), toast: $("#toast") };
 const logs = [];
 const AUTH_STORAGE = "voice-studio-session-auth";
