@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css?v=filename-key-1" />
     <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script defer src="./app.js?v=filename-key-1"></script>
+    <script defer src="./app.js?v=voice-column-1"></script>
   </head>
   <body>
     <div class="app-shell">
@@ -106,10 +106,9 @@
         <div class="document-step-actions"><button class="button button-quiet" id="loadGoogleSheetsBtn" type="button">读取工作表</button><select class="select-like" id="googleSheetTab" disabled><option>请先读取工作表</option></select></div>
         <div class="document-range-grid"><label class="field"><span>表头行</span><input class="select-like text-control" id="googleHeaderRow" type="number" min="1" value="1" /></label><label class="field"><span>起始行</span><input class="select-like text-control" id="googleStartRow" type="number" min="1" value="2" /></label><label class="field"><span>结束行</span><input class="select-like text-control" id="googleEndRow" type="number" min="1" value="100" /></label></div>
         <div class="document-step-actions"><button class="button button-quiet" id="previewGoogleSheetBtn" type="button" disabled>读取列与预览</button><span id="googlePreviewHint">先选择工作表</span></div>
-        <div class="document-columns" id="googleColumns" hidden></div>
-        <div class="google-role-filter" id="googleRoleFilter" hidden><div><p>按角色筛选配音（可选）</p><small>填写角色名后，只会导入这些角色所在行的目标语言列。</small></div><div class="document-range-grid"><label class="field"><span>角色名列</span><select class="select-like" id="googleRoleColumn"></select></label><label class="field"><span>需要配音的语言列</span><select class="select-like" id="googleTextColumn"></select></label><label class="field"><span>文件 Key 列</span><select class="select-like" id="googleKeyColumn"></select></label></div><label class="field"><span>角色名</span><textarea class="text-editor role-names-input" id="googleRoleNames" rows="2" placeholder="输入一个或多个角色名，用逗号或换行分隔，例如：露西、杰克"></textarea></label><small class="role-filter-hint" id="googleRoleFilterHint"></small></div>
+        <div class="google-role-filter" id="googleRoleFilter" hidden><div><p>指定配音列与角色筛选</p><small>先选择要配音的文本列；角色名为空时，导入该列所有非空文本。</small></div><div class="document-range-grid"><label class="field"><span>配音文本列（必选）</span><select class="select-like" id="googleTextColumn"></select></label><label class="field"><span>角色名列（可选）</span><select class="select-like" id="googleRoleColumn"></select></label><label class="field"><span>文件 Key 列</span><select class="select-like" id="googleKeyColumn"></select></label></div><label class="field"><span>角色名（可选）</span><textarea class="text-editor role-names-input" id="googleRoleNames" rows="2" placeholder="输入一个或多个角色名，用逗号或换行分隔，例如：露西、杰克"></textarea></label><small class="role-filter-hint" id="googleRoleFilterHint"></small></div>
         <div class="document-preview" id="googlePreview" hidden></div>
-        <div class="voice-dialog-actions"><button class="button button-quiet" id="cancelGoogleSheetDialogBtn" type="button">取消</button><select class="select-like import-mode" id="googleImportMode"><option value="append">追加到当前文本</option><option value="replace">替换当前文本</option></select><button class="button button-primary" id="importGoogleSheetTextBtn" type="button" disabled>导入所选列</button></div>
+        <div class="voice-dialog-actions"><button class="button button-quiet" id="cancelGoogleSheetDialogBtn" type="button">取消</button><select class="select-like import-mode" id="googleImportMode"><option value="append">追加到当前文本</option><option value="replace">替换当前文本</option></select><button class="button button-primary" id="importGoogleSheetTextBtn" type="button" disabled>导入指定列</button></div>
       </section>
     </div>
     <div class="voice-dialog-layer" id="googleWriteDialog" hidden>
