@@ -51,6 +51,27 @@ def config() -> dict[str, str]:
     }
 
 
+def google_credentials_path() -> Path:
+    configured = os.environ.get("GOOGLE_SERVICE_ACCOUNT_FILE", "").strip()
+    return Path(configured) if configured else ROOT / "credentials" / "google-service-account.json"
+
+
+def google_access_token() -> str:
+    path = google_credentials_path()
+    if not path.is_file():
+        raise ValueError("未找到 credentials/google-service-account.json")
+    try:
+        from google.auth.transport.requests import Request as GoogleRequest
+        from google.oauth2.service_account import Credentials
+    except ModuleNotFoundError as error:
+        raise ValueError("缺少 Google 认证组件；请重新运行 启动本机助手.cmd") from error
+    credentials = Credentials.from_service_account_file(str(path), scopes=["https://www.googleapis.com/auth/spreadsheets"])
+    credentials.refresh(GoogleRequest())
+    if not credentials.token:
+        raise ValueError("获取 Google 服务账号访问令牌失败")
+    return str(credentials.token)
+
+
 def request_json(url: str, *, method: str = "GET", headers: dict[str, str] | None = None, payload: dict | None = None) -> dict:
     body = json.dumps(payload, ensure_ascii=False).encode("utf-8") if payload is not None else None
     request = Request(url, data=body, method=method, headers={"Content-Type": "application/json", **(headers or {})})
@@ -64,7 +85,8 @@ def request_json(url: str, *, method: str = "GET", headers: dict[str, str] | Non
             detail = json.loads(raw or b"{}")
         except json.JSONDecodeError:
             detail = {}
-        message = detail.get("message") or detail.get("errmsg") or detail.get("errorMessage") or f"钉钉接口返回 HTTP {error.code}"
+        nested_error = detail.get("error") if isinstance(detail.get("error"), dict) else {}
+        message = detail.get("message") or detail.get("errmsg") or detail.get("errorMessage") or nested_error.get("message") or f"接口返回 HTTP {error.code}"
         raise ValueError(message) from error
 
 
@@ -195,6 +217,84 @@ def read_range(workbook_id: str, sheet: str, header_row: int, start_row: int, en
     return {"headers": headers, "records": records}
 
 
+def parse_google_spreadsheet_id(value: str) -> str:
+    raw = value.strip()
+    if re.fullmatch(r"[A-Za-z0-9_-]{20,}", raw):
+        return raw
+    parsed = urlparse(raw)
+    match = re.search(r"/spreadsheets/d/([A-Za-z0-9_-]{20,})", parsed.path)
+    if match:
+        return match.group(1)
+    spreadsheet_id = parse_qs(parsed.query).get("id", [""])[0]
+    if re.fullmatch(r"[A-Za-z0-9_-]{20,}", spreadsheet_id):
+        return spreadsheet_id
+    raise ValueError("无法从链接解析 Spreadsheet ID，请直接粘贴 Spreadsheet ID")
+
+
+def google_request(url: str, *, method: str = "GET", payload: dict | None = None) -> dict:
+    return request_json(url, method=method, headers={"Authorization": f"Bearer {google_access_token()}"}, payload=payload)
+
+
+def google_list_sheets(spreadsheet_id: str) -> list[dict[str, str]]:
+    result = google_request(f"https://sheets.googleapis.com/v4/spreadsheets/{quote(spreadsheet_id, safe='')}?fields=sheets.properties(sheetId,title)")
+    sheets = [{"name": str(item.get("properties", {}).get("title", "")).strip()} for item in result.get("sheets", []) if isinstance(item, dict)]
+    sheets = [item for item in sheets if item["name"]]
+    if not sheets:
+        raise ValueError("未读取到工作表；请确认已将表格共享给服务账号，且已启用 Google Sheets API")
+    return sheets
+
+
+def google_read_range(spreadsheet_id: str, sheet: str, header_row: int, start_row: int, end_row: int) -> dict:
+    if header_row < 1 or start_row < 1 or end_row < start_row:
+        raise ValueError("表头行、起始行与结束行必须是有效的行号")
+    if end_row - header_row > 1000:
+        raise ValueError("单次最多读取 1000 行，请缩小行范围")
+    range_address = f"'{sheet}'!A{header_row}:ZZ{end_row}"
+    result = google_request(f"https://sheets.googleapis.com/v4/spreadsheets/{quote(spreadsheet_id, safe='')}/values/{quote(range_address, safe='')}")
+    values = result.get("values", [])
+    if not isinstance(values, list) or not values:
+        return {"headers": [], "records": []}
+    width = max((len(row) for row in values if isinstance(row, list)), default=0)
+    if not width:
+        return {"headers": [], "records": []}
+    headers = unique_headers(values[0] if isinstance(values[0], list) else [], width)
+    offset = max(start_row - header_row, 1)
+    records: list[dict[str, str]] = []
+    for row in values[offset:]:
+        if not isinstance(row, list):
+            continue
+        record = {headers[index]: str(row[index]).strip() if index < len(row) and row[index] is not None else "" for index in range(width)}
+        if any(record.values()):
+            records.append(record)
+    return {"headers": headers, "records": records}
+
+
+def google_write_range(spreadsheet_id: str, sheet: str, start_cell: str, values: object) -> dict:
+    if not re.fullmatch(r"[A-Z]{1,3}[1-9]\d*", start_cell):
+        raise ValueError("起始单元格格式应如 A1")
+    if not isinstance(values, list) or not values or any(not isinstance(row, list) for row in values):
+        raise ValueError("写入内容格式无效")
+    if len(values) > 2000:
+        raise ValueError("单次最多写入 2000 行")
+    range_address = f"'{sheet}'!{start_cell}"
+    return google_request(
+        f"https://sheets.googleapis.com/v4/spreadsheets/{quote(spreadsheet_id, safe='')}/values/{quote(range_address, safe='')}?valueInputOption=USER_ENTERED",
+        method="PUT",
+        payload={"range": range_address, "majorDimension": "ROWS", "values": values},
+    )
+
+
+def google_health() -> dict:
+    path = google_credentials_path()
+    if not path.is_file():
+        return {"ok": True, "configured": False, "error": "未找到 credentials/google-service-account.json"}
+    try:
+        from google.oauth2.service_account import Credentials  # noqa: F401
+    except ModuleNotFoundError:
+        return {"ok": True, "configured": False, "error": "缺少 Google 认证组件；请重新运行 启动本机助手.cmd"}
+    return {"ok": True, "configured": True}
+
+
 class Handler(BaseHTTPRequestHandler):
     server_version = "JPMergeLocalAssistant/1.0"
 
@@ -234,11 +334,14 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self) -> None:
-        if self.path != "/health":
-            self.reply(404, {"error": "Not found"})
+        if self.path == "/health":
+            settings = config()
+            self.reply(200, {"ok": True, "configured": bool(settings["app_key"] and settings["app_secret"] and settings["operator_id"]), "operatorConfigured": bool(settings["operator_id"])})
             return
-        settings = config()
-        self.reply(200, {"ok": True, "configured": bool(settings["app_key"] and settings["app_secret"] and settings["operator_id"]), "operatorConfigured": bool(settings["operator_id"])})
+        if self.path == "/google/health":
+            self.reply(200, google_health())
+            return
+        self.reply(404, {"error": "Not found"})
 
     def do_POST(self) -> None:
         try:
@@ -255,6 +358,26 @@ class Handler(BaseHTTPRequestHandler):
                     raise ValueError("请先选择工作表")
                 data = read_range(workbook_id, sheet, int(body.get("headerRow", 1)), int(body.get("startRow", 2)), int(body.get("endRow", 100)), settings)
                 self.reply(200, {"workbookId": workbook_id, **data})
+                return
+            if self.path == "/google/sheets":
+                spreadsheet_id = parse_google_spreadsheet_id(str(body.get("spreadsheet", "")))
+                self.reply(200, {"spreadsheetId": spreadsheet_id, "sheets": google_list_sheets(spreadsheet_id)})
+                return
+            if self.path == "/google/read":
+                spreadsheet_id = parse_google_spreadsheet_id(str(body.get("spreadsheet", "")))
+                sheet = str(body.get("sheet", "")).strip()
+                if not sheet:
+                    raise ValueError("请先选择工作表")
+                data = google_read_range(spreadsheet_id, sheet, int(body.get("headerRow", 1)), int(body.get("startRow", 2)), int(body.get("endRow", 100)))
+                self.reply(200, {"spreadsheetId": spreadsheet_id, **data})
+                return
+            if self.path == "/google/write":
+                spreadsheet_id = parse_google_spreadsheet_id(str(body.get("spreadsheet", "")))
+                sheet = str(body.get("sheet", "")).strip()
+                if not sheet:
+                    raise ValueError("请先选择工作表")
+                result = google_write_range(spreadsheet_id, sheet, str(body.get("startCell", "")).strip().upper(), body.get("values"))
+                self.reply(200, {"updatedRange": result.get("updatedRange", ""), "updatedCells": result.get("updatedCells", 0)})
                 return
             self.reply(404, {"error": "Not found"})
         except (TypeError, ValueError) as error:

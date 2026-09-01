@@ -24,6 +24,12 @@ DINGTALK_OPERATOR_UNION_ID=...
 
 本机助手只监听 `127.0.0.1:8789`，其他设备无法访问。若你的现有钉钉配置仍放在 `D:\story-translation-automation\.env`，助手也会读取它；建议逐步迁移到本项目的 `.env`。
 
+## Google 表格导入与写入
+
+将服务账号凭据保存到 `credentials/google-service-account.json`（该目录下的 JSON 已被 Git 忽略，绝不会提交）。在 Google 表格的“共享”中，把表格分享给该服务账号的邮箱，并赋予“查看者”权限以导入、“编辑者”权限以写入。
+
+启动本机助手时会自动安装 `google-auth` 组件。网页可读取指定工作表的表头、行范围和所选列；“写入 Google 表格”会把当前配音文本写进指定 Sheet 和起始单元格。写入前会出现最后一次确认，目标范围的内容会被覆盖。
+
 ## 发布
 
 本项目将独立连接一个 Cloudflare Worker，不与 ItemTools 共用网址、密钥或发布流程。

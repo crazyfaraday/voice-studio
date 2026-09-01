@@ -7,9 +7,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css?v=dingtalk-import-1" />
+    <link rel="stylesheet" href="./styles.css?v=google-sheets-1" />
     <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script defer src="./app.js?v=dingtalk-import-1"></script>
+    <script defer src="./app.js?v=google-sheets-1"></script>
   </head>
   <body>
     <div class="app-shell">
@@ -23,6 +23,7 @@
           <div><p class="eyebrow">TEXT TO SPEECH</p><h1>JP-merge配音工具</h1><p class="subtitle">编辑文本、调整声音参数，然后单条试听或批量生成。</p></div>
           <div class="head-actions">
             <button class="button button-quiet" id="importDingTalkBtn" type="button">导入钉钉文档</button>
+            <button class="button button-quiet" id="importGoogleSheetBtn" type="button">导入 Google 表格</button>
             <label class="button button-quiet">导入 Excel<input id="excelInput" type="file" accept=".xlsx,.xls,.csv" hidden /></label>
             <button class="button button-quiet" id="exportExcelBtn">导出 Excel</button>
             <button class="button button-primary" id="addTextBtn">新增文本</button>
@@ -47,7 +48,7 @@
             <div class="divider"></div><label class="field"><span>输出格式</span><div class="format-row"><button class="format-chip active" data-format="mp3">MP3</button><button class="format-chip" data-format="wav">WAV</button><span>32 kHz</span></div></label><p class="settings-note"><span>i</span> 密钥不在浏览器中保存；单条可覆盖全局参数。</p>
           </aside>
           <section class="script-card">
-            <div class="table-toolbar"><div class="toolbar-title"><h2>配音文本</h2><span class="count-chip" id="rowCountChip">0 条</span></div><div class="toolbar-tools"><button class="plain-button" id="exportProjectBtn">导出项目</button><button class="plain-button" id="clearAudioBtn">清除音频</button></div></div>
+            <div class="table-toolbar"><div class="toolbar-title"><h2>配音文本</h2><span class="count-chip" id="rowCountChip">0 条</span></div><div class="toolbar-tools"><button class="plain-button" id="writeGoogleSheetBtn">写入 Google 表格</button><button class="plain-button" id="exportProjectBtn">导出项目</button><button class="plain-button" id="clearAudioBtn">清除音频</button></div></div>
             <div class="table-wrap"><table><thead><tr><th class="checkbox-col"><input id="selectAll" type="checkbox" aria-label="选择全部" /></th><th class="order-col">#</th><th>文本内容</th><th>音色</th><th>单条参数</th><th>时长</th><th>状态</th><th class="action-col"></th></tr></thead><tbody id="scriptBody"></tbody></table></div>
             <div class="add-row"><button id="addRowBtn">添加一行文本</button><p>粘贴多行内容或导入 Excel 均可</p></div>
           </section>
@@ -95,6 +96,30 @@
         <div class="document-columns" id="dingTalkColumns" hidden></div>
         <div class="document-preview" id="dingTalkPreview" hidden></div>
         <div class="voice-dialog-actions"><button class="button button-quiet" id="cancelDingTalkDialogBtn" type="button">取消</button><select class="select-like import-mode" id="dingTalkImportMode"><option value="append">追加到当前文本</option><option value="replace">替换当前文本</option></select><button class="button button-primary" id="importDingTalkTextBtn" type="button" disabled>导入所选列</button></div>
+      </section>
+    </div>
+    <div class="voice-dialog-layer" id="googleSheetDialog" hidden>
+      <section class="voice-dialog dingtalk-dialog" role="dialog" aria-modal="true" aria-labelledby="googleSheetDialogTitle">
+        <div class="voice-dialog-heading"><div><p class="section-kicker">LOCAL DOCUMENT ASSISTANT</p><h2 id="googleSheetDialogTitle">导入 Google 表格</h2><p>仅使用本机服务账号读取已授权给该账号的表格。</p></div><button class="close-button" id="closeGoogleSheetDialogBtn" type="button" aria-label="关闭">×</button></div>
+        <p class="assistant-status" id="googleSheetStatus">正在检测 Google 服务账号…</p>
+        <label class="field"><span>Google 表格链接或 Spreadsheet ID</span><input class="select-like text-control" id="googleSheetUrl" type="text" placeholder="粘贴 Google 表格链接" /></label>
+        <div class="document-step-actions"><button class="button button-quiet" id="loadGoogleSheetsBtn" type="button">读取工作表</button><select class="select-like" id="googleSheetTab" disabled><option>请先读取工作表</option></select></div>
+        <div class="document-range-grid"><label class="field"><span>表头行</span><input class="select-like text-control" id="googleHeaderRow" type="number" min="1" value="1" /></label><label class="field"><span>起始行</span><input class="select-like text-control" id="googleStartRow" type="number" min="1" value="2" /></label><label class="field"><span>结束行</span><input class="select-like text-control" id="googleEndRow" type="number" min="1" value="100" /></label></div>
+        <div class="document-step-actions"><button class="button button-quiet" id="previewGoogleSheetBtn" type="button" disabled>读取列与预览</button><span id="googlePreviewHint">先选择工作表</span></div>
+        <div class="document-columns" id="googleColumns" hidden></div>
+        <div class="document-preview" id="googlePreview" hidden></div>
+        <div class="voice-dialog-actions"><button class="button button-quiet" id="cancelGoogleSheetDialogBtn" type="button">取消</button><select class="select-like import-mode" id="googleImportMode"><option value="append">追加到当前文本</option><option value="replace">替换当前文本</option></select><button class="button button-primary" id="importGoogleSheetTextBtn" type="button" disabled>导入所选列</button></div>
+      </section>
+    </div>
+    <div class="voice-dialog-layer" id="googleWriteDialog" hidden>
+      <section class="voice-dialog google-write-dialog" role="dialog" aria-modal="true" aria-labelledby="googleWriteDialogTitle">
+        <div class="voice-dialog-heading"><div><p class="section-kicker">LOCAL DOCUMENT ASSISTANT</p><h2 id="googleWriteDialogTitle">写入 Google 表格</h2><p>将当前配音文本写入你授权给服务账号的 Google 表格。</p></div><button class="close-button" id="closeGoogleWriteDialogBtn" type="button" aria-label="关闭">×</button></div>
+        <p class="assistant-status" id="googleWriteStatus">正在检测 Google 服务账号…</p>
+        <label class="field"><span>Google 表格链接或 Spreadsheet ID</span><input class="select-like text-control" id="googleWriteUrl" type="text" placeholder="粘贴 Google 表格链接" /></label>
+        <div class="document-step-actions"><button class="button button-quiet" id="loadGoogleWriteSheetsBtn" type="button">读取工作表</button><select class="select-like" id="googleWriteSheet" disabled><option>请先读取工作表</option></select></div>
+        <div class="document-range-grid"><label class="field"><span>起始单元格</span><input class="select-like text-control" id="googleWriteCell" value="A1" /></label><label class="field write-header-option"><span>写入选项</span><label class="document-column"><input id="googleWriteHeader" type="checkbox" checked /> 写入“文本”表头</label></label></div>
+        <p class="write-summary" id="googleWriteSummary"></p>
+        <div class="voice-dialog-actions"><button class="button button-quiet" id="cancelGoogleWriteDialogBtn" type="button">取消</button><button class="button button-primary" id="confirmGoogleWriteBtn" type="button" disabled>确认写入</button></div>
       </section>
     </div>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
