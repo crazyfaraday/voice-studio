@@ -6,6 +6,8 @@ No DingTalk credential or document content is sent to GitHub Pages or Cloudflare
 
 from __future__ import annotations
 
+import base64
+import binascii
 import json
 import os
 import re
@@ -19,6 +21,7 @@ from urllib.request import Request, urlopen
 HOST = "127.0.0.1"
 PORT = 8789
 ROOT = Path(os.environ.get("JP_MERGE_APP_ROOT", Path(__file__).resolve().parent))
+OUTPUT_DIR = ROOT / "配音输出"
 FALLBACK_ENV = Path(r"D:\story-translation-automation\.env")
 ALLOWED_ORIGINS = {"https://crazyfaraday.github.io", "http://127.0.0.1:4173", "http://localhost:4173", "http://127.0.0.1:8790", "http://localhost:8790"}
 
@@ -304,6 +307,24 @@ def google_health() -> dict:
     return {"ok": True, "configured": True}
 
 
+def save_audio_file(filename: str, encoded_audio: object) -> dict[str, str]:
+    """Store a generated audio file beside the desktop app, never outside it."""
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,119}\.(mp3|wav|flac|opus)", filename, re.IGNORECASE):
+        raise ValueError("输出文件名无效")
+    if not isinstance(encoded_audio, str) or not encoded_audio:
+        raise ValueError("未收到音频内容")
+    try:
+        audio = base64.b64decode(encoded_audio, validate=True)
+    except (ValueError, binascii.Error) as error:
+        raise ValueError("音频内容格式无效") from error
+    if not audio or len(audio) > 30 * 1024 * 1024:
+        raise ValueError("音频文件为空或超过 30 MB")
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    target = OUTPUT_DIR / filename
+    target.write_bytes(audio)
+    return {"filename": filename, "folder": str(OUTPUT_DIR), "path": str(target)}
+
+
 class Handler(BaseHTTPRequestHandler):
     server_version = "JPMergeLocalAssistant/1.0"
 
@@ -329,9 +350,9 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
-    def read_body(self) -> dict:
+    def read_body(self, max_bytes: int = 100_000) -> dict:
         length = int(self.headers.get("Content-Length", "0"))
-        if length > 100_000:
+        if length > max_bytes:
             raise ValueError("请求内容过大")
         try:
             return json.loads(self.rfile.read(length) or b"{}")
@@ -354,8 +375,18 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         try:
-            body = self.read_body()
+            body = self.read_body(42 * 1024 * 1024 if self.path == "/audio/save" else 100_000)
             settings = config()
+            if self.path == "/audio/save":
+                self.reply(200, save_audio_file(str(body.get("filename", "")), body.get("audioBase64")))
+                return
+            if self.path == "/audio/open-folder":
+                OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+                if not hasattr(os, "startfile"):
+                    raise ValueError("当前系统无法自动打开输出文件夹")
+                os.startfile(str(OUTPUT_DIR))
+                self.reply(200, {"folder": str(OUTPUT_DIR)})
+                return
             if self.path == "/dingtalk/sheets":
                 workbook_id = parse_workbook_id(str(body.get("workbook", "")))
                 self.reply(200, {"workbookId": workbook_id, "sheets": list_sheets(workbook_id, settings)})
