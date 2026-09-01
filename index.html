@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css?v=voice-preview-quick-generate-1" />
     <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script defer src="./app.js?v=voice-preview-quick-generate-1"></script>
+    <script defer src="./app.js?v=voice-preview-select-1"></script>
   </head>
   <body>
     <div class="app-shell">
@@ -89,11 +89,12 @@
     <div class="voice-dialog-layer" id="voicePreviewDialog" hidden>
       <section class="voice-dialog voice-preview-dialog" role="dialog" aria-modal="true" aria-labelledby="voicePreviewDialogTitle">
         <div class="voice-dialog-heading"><div><p class="section-kicker">VOICE PREVIEW</p><h2 id="voicePreviewDialogTitle">试听所有音色</h2><p>按当前筛选的音色列表逐个生成并播放；不会写入文本、输出文件夹或 Google 表格。</p></div><button class="close-button" id="closeVoicePreviewDialogBtn" type="button" aria-label="关闭">×</button></div>
+        <label class="field"><span>选择音色</span><select class="select-like" id="voicePreviewVoice"></select><small>下拉列表仅显示当前筛选出的音色；切换音色后会立即试听。</small></label>
         <label class="field"><span>试听文本</span><textarea class="text-editor" id="voicePreviewText" rows="3">こんにちは。こちらはボイスサンプルです。</textarea></label>
         <p class="voice-preview-status" id="voicePreviewStatus">打开后将试听当前筛选的音色。</p>
         <div class="voice-preview-now" id="voicePreviewNow">尚未开始试听</div>
         <audio class="audio-preview voice-preview-audio" id="voicePreviewAudio" controls hidden></audio>
-        <div class="voice-dialog-actions"><button class="button button-quiet" id="cancelVoicePreviewBtn" type="button">关闭</button><button class="button button-stop" id="stopVoicePreviewBtn" type="button" hidden>中止试听</button><button class="button button-primary" id="startVoicePreviewBtn" type="button">开始试听全部</button></div>
+        <div class="voice-dialog-actions"><button class="button button-quiet" id="cancelVoicePreviewBtn" type="button">关闭</button><button class="button button-stop" id="stopVoicePreviewBtn" type="button" hidden>中止试听</button><button class="button button-quiet" id="startSelectedVoicePreviewBtn" type="button">试听此音色</button><button class="button button-primary" id="startVoicePreviewBtn" type="button">开始试听全部</button></div>
       </section>
     </div>
     <div class="voice-dialog-layer" id="dingTalkDialog" hidden>
