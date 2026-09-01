@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css?v=filename-key-1" />
     <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script defer src="./app.js?v=pause-resume-status-1"></script>
+    <script defer src="./app.js?v=regenerate-all-1"></script>
   </head>
   <body>
     <div class="app-shell">
@@ -62,7 +62,7 @@
           </aside>
         </div>
         <section class="log-card" id="logPanel" aria-labelledby="logTitle"><div class="log-heading"><button class="log-title-button" id="toggleLogBtn" type="button" aria-expanded="true"><span><p class="section-kicker">ACTIVITY</p><h2 id="logTitle">运行日志</h2></span><small id="logToggleText">收起日志</small></button><button class="text-button" id="clearLogBtn">清空日志</button></div><pre class="log-output" id="logOutput" aria-live="polite"></pre></section>
-        <section class="bottom-dock"><div class="selection-info"><span>已选择 <b id="selectedCount">0</b> 条文本</span><button id="clearSelectionBtn">取消选择</button></div><div class="generation-actions"><button class="button button-quiet" id="testRowBtn">试听选中项</button><button class="button button-stop" id="stopGenerationBtn" type="button" hidden>中止生成</button><button class="button button-primary button-generate" id="generateAllBtn">生成全部 <b id="generateCount">0 条</b></button></div></section>
+        <section class="bottom-dock"><div class="selection-info"><span>已选择 <b id="selectedCount">0</b> 条文本</span><button id="clearSelectionBtn">取消选择</button></div><div class="generation-actions"><button class="button button-quiet" id="testRowBtn">试听选中项</button><button class="button button-quiet" id="regenerateAllBtn" type="button">重新全部生成</button><button class="button button-stop" id="stopGenerationBtn" type="button" hidden>中止生成</button><button class="button button-primary button-generate" id="generateAllBtn">生成全部 <b id="generateCount">0 条</b></button></div></section>
       </main>
     </div>
     <div class="login-layer" id="loginLayer" hidden>
