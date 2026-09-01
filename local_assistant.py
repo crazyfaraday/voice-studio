@@ -384,7 +384,8 @@ class Handler(BaseHTTPRequestHandler):
             self.reply(400, {"error": str(error)})
         except Exception as error:
             print(f"[本机文档助手] 未处理错误：{error}")
-            self.reply(502, {"error": "读取钉钉文档失败，请检查本机助手窗口中的错误信息"})
+            source = "Google 表格" if self.path.startswith("/google/") else "钉钉文档"
+            self.reply(502, {"error": f"读取{source}失败，请检查本机助手窗口中的错误信息"})
 
 
 if __name__ == "__main__":
