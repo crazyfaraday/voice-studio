@@ -7,9 +7,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css?v=filename-key-1" />
+    <link rel="stylesheet" href="./styles.css?v=voice-preview-quick-generate-1" />
     <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script defer src="./app.js?v=c1-filename-fix-1"></script>
+    <script defer src="./app.js?v=voice-preview-quick-generate-1"></script>
   </head>
   <body>
     <div class="app-shell">
@@ -40,7 +40,7 @@
             <div class="card-heading"><div><p class="section-kicker">DEFAULTS</p><h2>全局配音设置</h2></div><button class="text-button" id="resetProjectBtn" title="恢复示例">重置</button></div>
             <label class="field"><span>语音接口地址</span><input class="select-like text-control" id="apiBaseUrl" placeholder="https://voice-studio.faradaycrazy.workers.dev" /><small>密钥只由接口服务器从环境变量读取</small></label>
             <label class="field"><span>语音模型</span><select class="select-like" id="globalModel"><option value="speech-2.8-hd">speech-2.8-hd</option><option value="speech-2.8-turbo">speech-2.8-turbo</option><option value="speech-2.6-hd">speech-2.6-hd</option><option value="speech-2.6-turbo">speech-2.6-turbo</option></select></label>
-            <div class="field"><span>默认音色</span><select class="select-like" id="globalVoice"></select><div class="voice-catalog-note"><small id="voiceCatalogHint">登录后自动加载 MiniMax 可用音色</small><span><button class="text-button" id="manageVoicesBtn" type="button">管理音色</button><button class="text-button" id="refreshVoicesBtn" type="button">刷新</button></span></div></div>
+            <div class="field"><span>默认音色</span><select class="select-like" id="globalVoice"></select><div class="voice-catalog-note"><small id="voiceCatalogHint">登录后自动加载 MiniMax 可用音色</small><span><button class="text-button" id="previewAllVoicesBtn" type="button">试听所有音色</button><button class="text-button" id="manageVoicesBtn" type="button">管理音色</button><button class="text-button" id="refreshVoicesBtn" type="button">刷新</button></span></div></div>
             <div class="divider"></div><p class="control-title">声音参数</p>
             <label class="slider-field"><span>语速</span><output id="globalSpeedOutput">1.0×</output><input id="globalSpeed" type="range" min="0.5" max="2" step="0.05" value="1" /></label>
             <label class="slider-field"><span>音调</span><output id="globalPitchOutput">0</output><input id="globalPitch" type="range" min="-12" max="12" step="1" value="0" /></label>
@@ -48,7 +48,8 @@
             <div class="divider"></div><label class="field"><span>输出格式</span><div class="format-row"><button class="format-chip active" data-format="mp3">MP3</button><button class="format-chip" data-format="wav">WAV</button><span>32 kHz</span></div></label><label class="field"><span>文件名 C 后编号</span><input class="select-like text-control" id="filenameCode" inputmode="numeric" placeholder="例如：2" /><small id="filenameRuleHint">导入带 Key 的文本后，文件名示例：C2_01_001.mp3</small></label><p class="settings-note"><span>i</span> 密钥不在浏览器中保存；单条可覆盖全局参数。</p>
           </aside>
           <section class="script-card">
-            <div class="table-toolbar"><div class="toolbar-title"><h2>配音文本</h2><span class="count-chip" id="rowCountChip">0 条</span></div><div class="toolbar-tools"><button class="plain-button" id="writeGoogleSheetBtn">写入 Google 表格</button><button class="plain-button" id="openOutputFolderBtn">打开输出文件夹</button><button class="plain-button" id="exportProjectBtn">导出项目</button><button class="plain-button" id="clearAudioBtn">清除音频</button></div></div>
+            <div class="table-toolbar"><div class="toolbar-title"><h2>配音文本</h2><span class="count-chip" id="rowCountChip">0 条</span></div><div class="toolbar-tools"><button class="plain-button" id="writeGoogleSheetBtn">写入 Google 表格</button><button class="plain-button" id="openOutputFolderBtn">打开输出文件夹</button><button class="plain-button" id="exportProjectBtn">导出项目</button><button class="plain-button" id="clearAudioBtn">清除音频</button><button class="plain-button plain-button--danger" id="clearTextsBtn">清空全部文本</button></div></div>
+            <section class="quick-generate" aria-labelledby="quickGenerateTitle"><div class="quick-generate-heading"><div><p class="section-kicker">QUICK GENERATE</p><h3 id="quickGenerateTitle">输入一句，立即生成</h3></div><small>使用当前全局音色和声音参数</small></div><textarea class="text-editor quick-generate-input" id="quickGenerateText" rows="5" placeholder="在这里直接输入需要配音的文本。生成后会自动播放，并可立即下载音频。"></textarea><div class="quick-generate-actions"><span id="quickGenerateHint">不会影响已有文本；生成结果会新增到下方列表。</span><button class="button button-download" id="quickDownloadBtn" type="button" hidden>↓ 下载 MP3</button><button class="button button-primary quick-generate-button" id="quickGenerateBtn" type="button">立即生成</button></div></section>
             <div class="table-wrap"><table><thead><tr><th class="checkbox-col"><input id="selectAll" type="checkbox" aria-label="选择全部" /></th><th class="order-col">#</th><th>文本内容</th><th>音色</th><th>单条参数</th><th>时长</th><th>状态</th><th class="action-col"></th></tr></thead><tbody id="scriptBody"></tbody></table></div>
             <div class="add-row"><button id="addRowBtn">添加一行文本</button><p>粘贴多行内容或导入 Excel 均可</p></div>
           </section>
@@ -83,6 +84,16 @@
         <p class="voice-selection-summary" id="voiceSelectionSummary"></p>
         <div class="voice-picker-list" id="voicePickerList"></div>
         <div class="voice-dialog-actions"><button class="button button-quiet" id="cancelVoiceDialogBtn" type="button">取消</button><button class="button button-primary" id="saveVoiceFilterBtn" type="button">保存筛选</button></div>
+      </section>
+    </div>
+    <div class="voice-dialog-layer" id="voicePreviewDialog" hidden>
+      <section class="voice-dialog voice-preview-dialog" role="dialog" aria-modal="true" aria-labelledby="voicePreviewDialogTitle">
+        <div class="voice-dialog-heading"><div><p class="section-kicker">VOICE PREVIEW</p><h2 id="voicePreviewDialogTitle">试听所有音色</h2><p>按当前筛选的音色列表逐个生成并播放；不会写入文本、输出文件夹或 Google 表格。</p></div><button class="close-button" id="closeVoicePreviewDialogBtn" type="button" aria-label="关闭">×</button></div>
+        <label class="field"><span>试听文本</span><textarea class="text-editor" id="voicePreviewText" rows="3">こんにちは。こちらはボイスサンプルです。</textarea></label>
+        <p class="voice-preview-status" id="voicePreviewStatus">打开后将试听当前筛选的音色。</p>
+        <div class="voice-preview-now" id="voicePreviewNow">尚未开始试听</div>
+        <audio class="audio-preview voice-preview-audio" id="voicePreviewAudio" controls hidden></audio>
+        <div class="voice-dialog-actions"><button class="button button-quiet" id="cancelVoicePreviewBtn" type="button">关闭</button><button class="button button-stop" id="stopVoicePreviewBtn" type="button" hidden>中止试听</button><button class="button button-primary" id="startVoicePreviewBtn" type="button">开始试听全部</button></div>
       </section>
     </div>
     <div class="voice-dialog-layer" id="dingTalkDialog" hidden>
